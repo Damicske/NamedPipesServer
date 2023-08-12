@@ -25,18 +25,12 @@ Public Class Form1
             Next i
             Thread.Sleep(250)
             While i > 0
-                If ClosingForm Then
-                    For j As Integer = 0 To NumThreads - 1
-                        servers(j).Abort()
-                        Console.WriteLine("Server thread[{0}] finished.", servers(j).ManagedThreadId)
-                        servers(j) = Nothing
-                    Next j
-                    Exit While
-                End If
                 For j As Integer = 0 To NumThreads - 1
-                    If Not (servers(j) Is Nothing) AndAlso servers(j).Join(250) Then
-                        Console.WriteLine("Server thread[{0}] finished.", servers(j).ManagedThreadId)
-                        servers(j) = Nothing
+                    If ClosingForm OrElse Not (Servers(j) Is Nothing) AndAlso Servers(j).Join(250) Then
+                        If Servers(j) IsNot Nothing Then
+                            Console.WriteLine("Server thread[{0}] finished.", Servers(j).ManagedThreadId)
+                            Servers(j) = Nothing
+                        End If
                         i -= 1    ' decrement the thread watch count
                     End If
                 Next j
@@ -90,10 +84,6 @@ Public Class Form1
 
     Private Sub Form1_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         ClosingForm = True
-    End Sub
-
-    Private Sub Form1_Closed(sender As Object, e As EventArgs) Handles Me.Closed
-        ' End
     End Sub
 End Class
 
